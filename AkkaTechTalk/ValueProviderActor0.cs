@@ -1,11 +1,12 @@
-﻿﻿using System.Threading.Tasks;
+﻿﻿using System;
+ using System.Threading.Tasks;
 using Akka.Actor;
 
 namespace AkkaTechTalk
 {
-public class ValueProviderActor : ReceiveActor
+public class ValueProviderActor0 : ReceiveActor
 {
-    public ValueProviderActor()
+    public ValueProviderActor0()
     {
         Receive<GetValueMsg>(ObtainValueAndSendBack);
     }

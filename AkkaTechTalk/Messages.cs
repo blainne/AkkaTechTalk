@@ -1,5 +1,9 @@
 ﻿namespace AkkaTechTalk
 {
+    public class ValueCachedSucessfullyMsg
+    {
+    }
+
     public class ServeAllValuesMsg
     {
     }

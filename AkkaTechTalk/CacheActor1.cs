@@ -37,6 +37,6 @@ namespace AkkaTechTalk
         }
 
         private static IActorRef CreateValueProviderActor() 
-            => Context.ActorOf<ValueProviderActor>();
+            => Context.ActorOf<ValueProviderActor0>();
     }
 }

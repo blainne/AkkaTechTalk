@@ -3,15 +3,39 @@ using Akka.Actor;
 
 namespace AkkaTechTalk
 {
-    public class CacheActor2 : ReceiveActor
+    public class CacheActor3 : ReceiveActor
     {
         private Dictionary<string, object> dict = new Dictionary<string, object>();
         private Dictionary<string, List<IActorRef>> subscribers = new Dictionary<string, List<IActorRef>>();
 
-        public CacheActor2()
+        public CacheActor3()
+        {
+            Become(Caching);
+        }
+
+        private void Caching()
         {
             Receive<GetValueMsg>(GetCachedValueOrProduceIt);
             Receive<ValueReadyMsg>(AddToCacheAndRespond);
+            Receive<ServeOnlyCachedValuesMsg>(_ => Become(CalculationStopped));
+        }
+
+        private void CalculationStopped()
+        {
+            Receive<GetValueMsg>(GetCachedValueOrSendError);
+            Receive<ValueReadyMsg>(AddToCacheAndRespond);
+            Receive<ServeAllValuesMsg>(_ => Become(Caching));
+        }
+
+        private void GetCachedValueOrSendError(GetValueMsg msg)
+        {
+            if (dict.ContainsKey(msg.Key))
+            {
+                var value = dict[msg.Key];
+                Sender.Tell(new ValueReadyMsg(msg.Key, value));
+            }
+            else
+                Sender.Tell(new ValueMissingMsg(msg.Key));
         }
 
 
@@ -38,13 +62,15 @@ namespace AkkaTechTalk
             dict.Add(msg.Key, msg.Value);
             subscribers[msg.Key].ForEach(sub => sub.Tell(msg));
             subscribers.Remove(msg.Key);
+            
+            Sender.Tell(new ValueCachedSucessfullyMsg()) ;
         }
         
         private IActorRef GetOrCreateValueProviderByName(string name)
         {
             return 
                 Context.Child(name).IsNobody() 
-                    ? Context.ActorOf<ValueProviderActor0>(name) 
+                    ? Context.ActorOf<ValueProviderActor1>(name) 
                     : Context.Child(name);
         }
     }

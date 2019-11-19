@@ -28,16 +28,22 @@ namespace AkkaTechTalk
             cache2.Tell(new GetValueMsg("1"), console);
             cache2.Tell(new GetValueMsg("2"), console);
             
+            var cache3 = system.ActorOf<CacheActor3>("cache3");
+            cache3.Tell(new GetValueMsg("1"), console);
+            cache3.Tell(new GetValueMsg("2"), console);
+            cache3.Tell(new GetValueMsg("1"), console);
+            cache3.Tell(new GetValueMsg("2"), console);
+            
             await Task.Delay(5000);
             
             Console.WriteLine("Now trying behavior change");
-            cache2.Tell(new ServeOnlyCachedValuesMsg());
-            cache2.Tell(new GetValueMsg("2"), console);
-            cache2.Tell(new GetValueMsg("3"), console);
+            cache3.Tell(new ServeOnlyCachedValuesMsg());
+            cache3.Tell(new GetValueMsg("2"), console);
+            cache3.Tell(new GetValueMsg("3"), console);
             
-            cache2.Tell(new ServeAllValuesMsg());
-            cache2.Tell(new GetValueMsg("2"), console);
-            cache2.Tell(new GetValueMsg("3"), console);
+            cache3.Tell(new ServeAllValuesMsg());
+            cache3.Tell(new GetValueMsg("2"), console);
+            cache3.Tell(new GetValueMsg("3"), console);
             await Task.Delay(5000);
         }
     }
